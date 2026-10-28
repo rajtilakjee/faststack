@@ -12,7 +12,18 @@ export default function Home() {
         </h1>
         <p className="mt-4 max-w-xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">
           FastAPI + uv backend and Next.js frontend with versioned routes,
-          environment-based configuration, and a live health check.
+          environment-based configuration, auth pages, and a live health check.
+        </p>
+        <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
+          Try{" "}
+          <a href="/register" className="font-medium text-zinc-900 dark:text-zinc-100">
+            registration
+          </a>{" "}
+          or visit the protected{" "}
+          <a href="/dashboard" className="font-medium text-zinc-900 dark:text-zinc-100">
+            dashboard
+          </a>
+          .
         </p>
       </header>
       <BackendHealthSection />
