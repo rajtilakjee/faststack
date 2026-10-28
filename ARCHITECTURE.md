@@ -42,9 +42,14 @@ flowchart TB
 
 All public API routes for version 1 live under the configurable prefix (default **`/api/v1`**). New breaking versions can be added as `app/api/v2/` without changing existing clients.
 
-| Method | Path              | Purpose                          |
-|--------|-------------------|----------------------------------|
-| GET    | `/api/v1/health`  | Liveness / connectivity check    |
+| Method | Path                    | Purpose                          |
+|--------|-------------------------|----------------------------------|
+| GET    | `/api/v1/health`        | Liveness / connectivity check    |
+| POST   | `/api/v1/auth/register` | Create account + session cookie  |
+| POST   | `/api/v1/auth/login`    | Authenticate + session cookie    |
+| POST   | `/api/v1/auth/logout`   | Revoke session + clear cookie    |
+| GET    | `/api/v1/auth/me`       | Current user (authenticated)     |
+| GET    | `/api/v1/admin/overview`| Example admin-only route         |
 
 OpenAPI is auto-generated at `/docs` and `/openapi.json`.
 
@@ -58,6 +63,30 @@ OpenAPI is auto-generated at `/docs` and `/openapi.json`.
 - **Models** — [`app/models/`](backend/app/models/) defines tables (currently `User`: email, hashed password, timestamps). Import models in Alembic `env.py` so autogenerate sees metadata.
 - **Migrations** — Run `uv run alembic upgrade head` after pulling schema changes. Revision scripts live in [`alembic/versions/`](backend/alembic/versions/).
 - **Tests** — Integration tests under `tests/integration/` use a real PostgreSQL instance (`DATABASE_URL`). Each test runs in a rolled-back transaction for isolation. CI provides Postgres as a service container.
+
+### Authentication (phase 3)
+
+```mermaid
+sequenceDiagram
+  participant Client
+  participant API as FastAPI
+  participant DB as PostgreSQL
+
+  Client->>API: POST /auth/login (email, password)
+  API->>DB: Verify User + insert UserSession
+  API-->>Client: Set-Cookie faststack_session + User JSON
+  Client->>API: GET /auth/me (Cookie)
+  API->>DB: Lookup session by token
+  API-->>Client: User JSON
+  Client->>API: POST /auth/logout (Cookie)
+  API->>DB: Delete UserSession
+  API-->>Client: Clear cookie
+```
+
+- **Passwords** — Hashed with Argon2 ([`app/core/security.py`](backend/app/core/security.py)); never store plaintext.
+- **Sessions** — Opaque tokens in the `user_sessions` table; the browser holds only an **HttpOnly** cookie (`faststack_session`). Expired sessions are removed on access.
+- **Dependencies** — [`app/api/deps.py`](backend/app/api/deps.py): `get_current_user` for protected routes; `require_roles(UserRole.ADMIN)` for access control.
+- **Browser clients** — Send `credentials: "include"` on cross-origin requests and list the frontend origin in `CORS_ORIGINS`. For local dev across ports, prefer an API proxy on the same origin or deploy UI and API under one site so cookies behave predictably.
 
 ## Frontend (Next.js)
 

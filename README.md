@@ -20,6 +20,12 @@ A starter template for full-stack apps: **FastAPI** + **uv** on the backend and 
 - **Alembic** migrations (`backend/alembic/`)
 - **`User` model** and **database integration tests** (pytest + PostgreSQL)
 
+**Phase 3**
+
+- **Registration**, **login**, and **logout** (`/api/v1/auth/*`)
+- **Password hashing** (Argon2 via pwdlib) and **server-side sessions** (HTTP-only cookie)
+- **`get_current_user`** dependency, **protected routes**, and **role-based access control** (`user` / `admin`)
+
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) (Python 3.13+)
@@ -48,6 +54,8 @@ uv run fastapi dev app/main.py
 
 API docs: [http://localhost:8000/docs](http://localhost:8000/docs)  
 Health: [http://localhost:8000/api/v1/health](http://localhost:8000/api/v1/health)
+
+Auth (cookie session): register/login at `/api/v1/auth/register` and `/api/v1/auth/login`, then call `/api/v1/auth/me` with credentials. See OpenAPI docs for schemas.
 
 ### Frontend
 
@@ -84,6 +92,7 @@ App: [http://localhost:3000](http://localhost:3000) — shows live backend healt
 | `API_V1_PREFIX` | `/api/v1`               | Prefix for version 1 routes          |
 | `CORS_ORIGINS`  | `http://localhost:3000` | Comma-separated allowed origins      |
 | `DATABASE_URL`  | `postgresql+psycopg://faststack:faststack@localhost:5432/faststack` | SQLAlchemy database URL |
+| `SESSION_COOKIE_*` | see `backend/.env.example` | Session cookie name, TTL, Secure, HttpOnly, SameSite |
 
 ### Frontend (`frontend/.env.local`)
 
