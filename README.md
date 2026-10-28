@@ -26,6 +26,12 @@ A starter template for full-stack apps: **FastAPI** + **uv** on the backend and 
 - **Password hashing** (Argon2 via pwdlib) and **server-side sessions** (HTTP-only cookie)
 - **`get_current_user`** dependency, **protected routes**, and **role-based access control** (`user` / `admin`)
 
+**Phase 4**
+
+- **Login and registration pages** with client-side validation
+- **Session-aware header**, **protected dashboard**, loading states, and error handling
+- **Same-origin API proxy** (`/backend-api/*`) so HttpOnly session cookies work in the browser
+
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) (Python 3.13+)
@@ -66,7 +72,9 @@ npm install
 npm run dev
 ```
 
-App: [http://localhost:3000](http://localhost:3000) — shows live backend health when the API is running.
+App: [http://localhost:3000](http://localhost:3000) — health check, auth pages (`/login`, `/register`), and protected [`/dashboard`](http://localhost:3000/dashboard).
+
+Set `BACKEND_URL=http://localhost:8000` in `frontend/.env.local` so the Next.js proxy can reach the API.
 
 ## Development commands
 
@@ -98,7 +106,8 @@ App: [http://localhost:3000](http://localhost:3000) — shows live backend healt
 
 | Variable               | Default                  | Description              |
 |------------------------|--------------------------|--------------------------|
-| `NEXT_PUBLIC_API_URL`  | `http://localhost:8000`  | Base URL for the FastAPI |
+| `BACKEND_URL`          | `http://localhost:8000`  | FastAPI URL for SSR and `/backend-api` proxy |
+| `NEXT_PUBLIC_API_URL`  | `http://localhost:8000`  | Fallback server-side API URL |
 
 ## Project layout
 

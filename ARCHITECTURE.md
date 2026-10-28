@@ -105,7 +105,13 @@ sequenceDiagram
 
 The home page is a **Server Component** that calls the backend during render (`cache: "no-store"` so status stays fresh in dev). If the API is down, the UI shows **Unavailable** and hints to start the backend.
 
-API base URL comes from **`NEXT_PUBLIC_API_URL`** (see `frontend/.env.example`).
+Server components call the API with **`BACKEND_URL`**. Browser auth requests go to **`/backend-api/...`**, which Next.js proxies to FastAPI so **HttpOnly session cookies** stay on the frontend origin (see `frontend/app/backend-api/[...path]/route.ts`).
+
+### Auth UI (phase 4)
+
+- **`AuthProvider`** — hydrates the current user in the header from the server and after login/register/logout.
+- **`/login` / `/register`** — validated forms with inline API errors and submit loading states.
+- **`/dashboard`** — server-side session check; unauthenticated users are redirected to `/login?next=/dashboard`.
 
 ## CI pipeline
 
