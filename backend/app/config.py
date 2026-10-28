@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     debug: bool = False
     api_v1_prefix: str = "/api/v1"
     cors_origins: list[str] = ["http://localhost:3000"]
+    database_url: str = (
+        "postgresql+psycopg://faststack:faststack@localhost:5432/faststack"
+    )
 
     @field_validator("cors_origins", mode="before")
     @classmethod
