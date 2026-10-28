@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -16,6 +18,11 @@ class Settings(BaseSettings):
     database_url: str = (
         "postgresql+psycopg://faststack:faststack@localhost:5432/faststack"
     )
+    session_cookie_name: str = "faststack_session"
+    session_max_age_seconds: int = 60 * 60 * 24 * 7
+    session_cookie_secure: bool = False
+    session_cookie_httponly: bool = True
+    session_cookie_samesite: Literal["lax", "strict", "none"] = "lax"
 
     @field_validator("cors_origins", mode="before")
     @classmethod

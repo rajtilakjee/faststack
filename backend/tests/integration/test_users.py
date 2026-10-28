@@ -17,9 +17,7 @@ def test_create_and_fetch_user(db_session) -> None:
     assert user.is_active is True
     assert user.created_at is not None
 
-    fetched = db_session.scalar(
-        select(User).where(User.email == "alice@example.com")
-    )
+    fetched = db_session.scalar(select(User).where(User.email == "alice@example.com"))
     assert fetched is not None
     assert fetched.id == user.id
 
